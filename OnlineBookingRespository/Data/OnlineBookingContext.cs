@@ -16,6 +16,9 @@ public class OnlineBookingContext : IdentityDbContext<User>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        
         builder.Entity<User>().ToTable("Users");
         builder.Entity<IdentityRole>().ToTable("Roles");
         builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
@@ -23,6 +26,9 @@ public class OnlineBookingContext : IdentityDbContext<User>
         builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
         builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
         builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+       
+
+       // many to many between Doctor and Clinic
 
         builder.Entity<Doctor>()
     .HasMany(d => d.Clinics)
@@ -40,7 +46,6 @@ public class OnlineBookingContext : IdentityDbContext<User>
     );
 
 
-        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
     public DbSet<Doctor> Doctors { get; set; }
     public DbSet<Patient> Patients { get; set; }

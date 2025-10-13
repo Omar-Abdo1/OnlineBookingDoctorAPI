@@ -10,5 +10,7 @@ namespace OnlineBookingCore.Entities
     {
         public string Role{ get; set; }
         public DateTime? LastLogin { get; set; }
+        public Doctor? Doctor { get; set; }
+        public Patient? Patient { get; set; }
     }
 }

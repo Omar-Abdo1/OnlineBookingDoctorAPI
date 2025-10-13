@@ -3,7 +3,7 @@ using OnlineBookingCore.Entities;
 
 namespace OnlineBookingCore.Repositories;
 
-public interface IGenricRepository<T> where T : BaseEntity
+public interface IGenericRepository<T> where T : BaseEntity
 {
      Task AddAsync(T entity);
     void Update(T entity);

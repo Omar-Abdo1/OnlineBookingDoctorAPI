@@ -8,14 +8,13 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.20" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.20"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.20" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Controllers\" />
       <Folder Include="ErrorResponses\" />
-      <Folder Include="ExtensionMethods\" />
       <Folder Include="MiddleWares\" />
       <Folder Include="wwwroot\" />
     </ItemGroup>
