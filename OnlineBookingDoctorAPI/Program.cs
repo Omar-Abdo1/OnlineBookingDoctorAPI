@@ -1,8 +1,9 @@
+
 namespace OnlineBookingDoctorAPI;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -19,10 +20,12 @@ public class Program
             app.UseSwaggerUI();
         }
 
+        app.UseStatusCodePagesWithReExecute("/error/{0}");  
+
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
         
-        app.Run();
+        await app.RunAsync();
     }
 }
