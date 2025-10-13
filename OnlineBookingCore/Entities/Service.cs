@@ -15,5 +15,6 @@ namespace OnlineBookingCore.Entities
        [ForeignKey("Doctor")]
         public int DoctorId { get; set; }
         public Doctor Doctor { get; set; }
+        public ICollection<DoctorSchedule>? DoctorSchedules { get; set; } 
     }
 }

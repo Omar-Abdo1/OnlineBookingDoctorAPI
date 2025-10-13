@@ -12,6 +12,10 @@ namespace OnlineBookingRespository.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Appointment> builder)
         {
+            builder.Property(a => a.BookedDurationMinutes).HasColumnType("decimal(18,2)");
+
+
+
             // Configure the one-to-many relationship between Appointment and Doctor
             builder.HasOne(a => a.Doctor)
                 .WithMany(d => d.Appointments)

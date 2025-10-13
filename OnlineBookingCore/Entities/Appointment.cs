@@ -9,8 +9,9 @@ namespace OnlineBookingCore.Entities
     public class Appointment : BaseEntity
     {
         public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
         public AppointmentStatus Status { get; set; }
+        public decimal BookedDurationMinutes { get; set; }
+
 
         [ForeignKey("Patient")]
         public int PatientId { get; set; }
@@ -25,5 +26,9 @@ namespace OnlineBookingCore.Entities
         public DoctorSchedule DoctorSchedule { get; set; }
 
         public BillingRecord? BillingRecord { get; set; }
+
+        [ForeignKey("Service")]
+        public int ServiceId { get; set; }
+        public Service Service { get; set; }
     }
 }

@@ -1,43 +1,75 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using OnlineBookingCore.Entities;
 using OnlineBookingCore.Repositories;
+using OnlineBookingRespository.Data;
 
 namespace OnlineBookingRespository;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 {
-    Task IGenericRepository<T>.AddAsync(T entity)
+   private readonly OnlineBookingContext _context;
+
+    public GenericRepository(OnlineBookingContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
     }
 
-    Task<int> IGenericRepository<T>.CountAsync(Expression<Func<T, bool>> criteria)
+    public async Task AddAsync(T entity) => await _context.Set<T>().AddAsync(entity);
+
+    public void Update(T entity) => _context.Set<T>().Update(entity);
+
+    public void Delete(T entity) => _context.Set<T>().Remove(entity);
+    
+    public void DeleteRange(IEnumerable<T> entities) => _context.Set<T>().RemoveRange(entities);
+    
+    
+    public async Task<T?> GetEntityByConditionAsync(Expression<Func<T, bool>> expression, bool asNoTracking = false, params Expression<Func<T, object>>[] includes)
     {
-        throw new NotImplementedException();
+        var query = _context.Set<T>().AsQueryable();
+
+        if (asNoTracking)
+            query = query.AsNoTracking();
+        
+        query = query.Where(expression);
+        
+        if(includes is not null  && includes.Any())
+        query = includes.Aggregate(query, (cur, next) => cur.Include(next));
+
+        return await query.FirstOrDefaultAsync();
     }
 
-    void IGenericRepository<T>.Delete(T entity)
+    public async Task<int> CountAsync(Expression<Func<T, bool>> criteria = null)
     {
-        throw new NotImplementedException();
+        var  query = _context.Set<T>().AsQueryable();
+        if (criteria is not null)
+            query = query.Where(criteria);
+        return await query.CountAsync();
     }
 
-    void IGenericRepository<T>.DeleteRange(IEnumerable<T> entities)
+    public async Task<IReadOnlyList<T>> GetAllByConditionAsync(int?pageIndex=null,int?pageSize=null, Expression<Func<T, bool>> criteria = null, Expression<Func<T, object>> orderBy = null, bool descending = false,
+        bool asNoTracking = false, params Expression<Func<T, object>>[] includes)
     {
-        throw new NotImplementedException();
-    }
+        var query = _context.Set<T>().AsQueryable();
+        
+        if (asNoTracking)
+            query = query.AsNoTracking();
+        
+        if (criteria is not null)
+            query = query.Where(criteria);
+        
+        if(orderBy is not null)
+           query =  descending ?  query.OrderByDescending(orderBy) : query.OrderBy(orderBy); 
+        
+        if(includes is not null  && includes.Any())
+            query = includes.Aggregate(query, (cur, next) => cur.Include(next));
 
-    Task<IReadOnlyList<T>> IGenericRepository<T>.GetAllByConditionAsync(int? pageIndex, int? pageSize, Expression<Func<T, bool>> criteria, Expression<Func<T, object>> orderBy, bool descending, bool asNoTracking, params Expression<Func<T, object>>[] includes)
-    {
-        throw new NotImplementedException();
-    }
-
-    Task<T?> IGenericRepository<T>.GetEntityByConditionAsync(Expression<Func<T, bool>> expression, bool asNoTracking, params Expression<Func<T, object>>[] includes)
-    {
-        throw new NotImplementedException();
-    }
-
-    void IGenericRepository<T>.Update(T entity)
-    {
-        throw new NotImplementedException();
+        if (pageIndex.HasValue && pageSize.HasValue)
+        {
+            query = query.Skip((pageIndex.Value - 1) * pageSize.Value).Take(pageSize.Value);
+        }
+        
+        return await query.ToListAsync();
     }
 }

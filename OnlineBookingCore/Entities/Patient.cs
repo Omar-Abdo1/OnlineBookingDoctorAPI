@@ -14,7 +14,7 @@ namespace OnlineBookingCore.Entities
         public string? PhoneNumber { get; set; } 
         public DateTime? DateOfBirth { get; set; }
         [ForeignKey("User")]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public User User { get; set; }
 
         public ICollection<Appointment>? Appointments { get; set; }

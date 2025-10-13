@@ -16,5 +16,6 @@ namespace OnlineBookingCore.Entities
         public int DoctorId { get; set; }
         public Doctor Doctor { get; set; }
         public ICollection<Appointment>? Appointments { get; set; }
+        public ICollection<Service>? Services { get; set; }
     }
 }
