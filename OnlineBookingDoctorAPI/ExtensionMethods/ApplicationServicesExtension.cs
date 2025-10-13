@@ -21,8 +21,9 @@ namespace OnlineBookingDoctorAPI.ExtensionMethods
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, string connectionString)
         {
             services.AddDbContext<OnlineBookingContext>(options =>
-            options.UseSqlServer(connectionString)
-            );
+            {
+                options.UseSqlServer(connectionString);
+            });
 
             services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<OnlineBookingContext>();

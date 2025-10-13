@@ -26,25 +26,40 @@ public class OnlineBookingContext : IdentityDbContext<User>
         builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
         builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
         builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
-       
 
-       // many to many between Doctor and Clinic
+
+        // many to many between Doctor and Clinic
 
         builder.Entity<Doctor>()
-    .HasMany(d => d.Clinics)
-    .WithMany(c => c.Doctors)
-    .UsingEntity<Dictionary<string, object>>(
-        "DoctorClinic", // The name of the junction table
-        j => j.HasOne<Clinic>() 
-            .WithMany()
-            .HasForeignKey("ClinicId")
-            .OnDelete(DeleteBehavior.NoAction), // can not delete Clinic if linked
-        j => j.HasOne<Doctor>() 
-            .WithMany()
-            .HasForeignKey("DoctorId")
-            .OnDelete(DeleteBehavior.Cascade) // Deleting a Doctor should CASCADE to delete the link
-    );
+        .HasMany(d => d.Clinics)
+        .WithMany(c => c.Doctors)
+        .UsingEntity<Dictionary<string, object>>(
+            "DoctorClinic", // The name of the junction table
+            j => j.HasOne<Clinic>()
+                .WithMany()
+                .HasForeignKey("ClinicId")
+                .OnDelete(DeleteBehavior.NoAction), // can not delete Clinic if linked
+            j => j.HasOne<Doctor>()
+                .WithMany()
+                .HasForeignKey("DoctorId")
+                .OnDelete(DeleteBehavior.Cascade)); // Deleting a Doctor should CASCADE to delete the link
 
+        builder.Entity<DoctorSchedule>()
+        .HasMany(ds => ds.Services)
+        .WithMany(s => s.DoctorSchedules)
+        .UsingEntity<Dictionary<string, object>>(
+            "DoctorScheduleService", // The name of the junction table
+
+            j => j.HasOne<Service>()
+                .WithMany()
+                .HasForeignKey("ServicesId")
+                // When a Service is deleted, the link must be manually handled by service code, 
+                // not automatically deleted by the database.
+                .OnDelete(DeleteBehavior.NoAction),
+            j => j.HasOne<DoctorSchedule>()
+                .WithMany()
+                .HasForeignKey("DoctorSchedulesId")
+                .OnDelete(DeleteBehavior.Cascade));// Deleting the Schedule block CASCADEs to delete the link.
 
     }
     public DbSet<Doctor> Doctors { get; set; }
@@ -55,6 +70,5 @@ public class OnlineBookingContext : IdentityDbContext<User>
     public DbSet<Clinic> Clinics { get; set; }
     public DbSet<Department> Departments { get; set; }
     public DbSet<DoctorSchedule> DoctorSchedules { get; set; }
-    public DbSet<InsuranceProvider> InsuranceProviders { get; set; }
     public DbSet<Service> Services { get; set; }
 }
