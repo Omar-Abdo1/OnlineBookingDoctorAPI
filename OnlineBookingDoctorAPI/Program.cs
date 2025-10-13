@@ -1,4 +1,6 @@
 
+using OnlineBookingDoctorAPI.MiddleWares;
+
 namespace OnlineBookingDoctorAPI;
 
 public class Program
@@ -13,7 +15,7 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         var app = builder.Build();
-
+        app.UseMiddleware<ExceptionMiddleWare>(); // Register the custom exception middleware for global error handling
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
