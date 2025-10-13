@@ -1,0 +1,6 @@
+@OnlineBookingDoctorAPI_HostAddress = http://localhost:5220
+
+GET {{OnlineBookingDoctorAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
