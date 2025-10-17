@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OnlineBookingAPI.Helpers;
 using OnlineBookingCore;
 using OnlineBookingCore.Entities;
 using OnlineBookingCore.Repositories;
+using OnlineBookingCore.Services;
 using OnlineBookingDoctorAPI.ErrorResponses;
 using OnlineBookingRespository;
 using OnlineBookingRespository.Data;
+using OnlineBookingService;
 
 namespace OnlineBookingDoctorAPI.ExtensionMethods
 {
@@ -28,8 +31,16 @@ namespace OnlineBookingDoctorAPI.ExtensionMethods
             services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<OnlineBookingContext>();
 
+            // Repositotries :
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
+
+            // Services :
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddAutoMapper(typeof(MappingProfile));
+
 
 
              #region Validation Error 

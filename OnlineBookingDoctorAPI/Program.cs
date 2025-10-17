@@ -1,4 +1,5 @@
 
+using OnlineBookingAPI.Helpers;
 using OnlineBookingDoctorAPI.ExtensionMethods;
 using OnlineBookingDoctorAPI.MiddleWares;
 using StackExchange.Redis;
@@ -18,6 +19,8 @@ public class Program
         });
 
         builder.Services.AddApplicationServices(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+        builder.Services.AddScoped<AuthorizeV1Filter>(); // Register the AuthorizeV1Filter
 
         builder.Services.AddJWTServices(builder.Configuration["JWT:SecretKey"],
          builder.Configuration["JWT:IssuerIP"]);

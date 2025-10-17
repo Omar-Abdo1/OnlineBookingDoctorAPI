@@ -1,8 +1,10 @@
 using System;
+using Microsoft.AspNetCore.Identity;
+using OnlineBookingCore.Entities;
 
 namespace OnlineBookingCore.Services;
 
-public class ITokenService
+public interface ITokenService
 {
-
+    Task<string> CreateTokenAsync(User user, UserManager<User> userManager);
 }
