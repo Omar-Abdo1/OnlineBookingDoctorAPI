@@ -1,0 +1,15 @@
+ [
+    { "doctorScheduleId": 1, "serviceId": 1 }, { "doctorScheduleId": 1, "serviceId": 2 },
+    { "doctorScheduleId": 2, "serviceId": 21 }, { "doctorScheduleId": 2, "serviceId": 24 },
+    { "doctorScheduleId": 3, "serviceId": 3 }, { "doctorScheduleId": 3, "serviceId": 4 },
+    { "doctorScheduleId": 4, "serviceId": 5 }, { "doctorScheduleId": 4, "serviceId": 6 }, { "doctorScheduleId": 4, "serviceId": 23 },
+    { "doctorScheduleId": 5, "serviceId": 7 }, { "doctorScheduleId": 5, "serviceId": 8 },
+    { "doctorScheduleId": 6, "serviceId": 9 }, { "doctorScheduleId": 6, "serviceId": 10 },
+    { "doctorScheduleId": 7, "serviceId": 11 }, { "doctorScheduleId": 7, "serviceId": 12 },
+    { "doctorScheduleId": 8, "serviceId": 13 }, { "doctorScheduleId": 8, "serviceId": 14 },
+    { "doctorScheduleId": 9, "serviceId": 15 }, { "doctorScheduleId": 9, "serviceId": 16 },
+    { "doctorScheduleId": 10, "serviceId": 17 }, { "doctorScheduleId": 10, "serviceId": 18 },
+    { "doctorScheduleId": 11, "serviceId": 19 }, { "doctorScheduleId": 11, "serviceId": 20 },
+    { "doctorScheduleId": 13, "serviceId": 23 }, { "doctorScheduleId": 13, "serviceId": 6 },
+    { "doctorScheduleId": 15, "serviceId": 7 }, { "doctorScheduleId": 15, "serviceId": 8 }
+  ]

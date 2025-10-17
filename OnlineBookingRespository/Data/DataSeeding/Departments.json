@@ -1,0 +1,5 @@
+ [
+    { "name": "Cardiology", "description": "Heart and vascular specialists." },
+    { "name": "Dermatology", "description": "Skin, hair, and nail specialists." },
+    { "name": "Pediatrics", "description": "Children's health." }
+]

@@ -1,0 +1,7 @@
+ [
+    { "name": "City General", "address": "123 Main St", "city": "Anytown" },
+    { "name": "Suburbia Clinic", "address": "45 Oak Ave", "city": "Anytown" },
+    { "name": "Downtown Wellness", "address": "789 Pine Rd", "city": "Midtown" },
+    { "name": "Northside Specialty", "address": "10 Bridge St", "city": "Midtown" },
+    { "name": "Riverside Health", "address": "22 River Rd", "city": "Anytown" }
+  ]

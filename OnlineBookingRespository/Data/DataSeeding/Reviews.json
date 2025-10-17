@@ -1,0 +1,17 @@
+ [
+    { "doctorId": 1, "patientId": 1, "rating": 5, "comment": "Excellent service and quick diagnosis." },
+    { "doctorId": 1, "patientId": 2, "rating": 4, "comment": "Very professional and punctual." },
+    { "doctorId": 2, "patientId": 3, "rating": 5, "comment": "Great doctor, explained everything well." },
+    { "doctorId": 3, "patientId": 4, "rating": 4, "comment": "Good with kids, fast check-in." },
+    { "doctorId": 4, "patientId": 5, "rating": 3, "comment": "Wait time was too long, but treatment was fine." },
+    { "doctorId": 6, "patientId": 7, "rating": 5, "comment": "Highly recommend for pediatric care." },
+    { "doctorId": 7, "patientId": 8, "rating": 5, "comment": "Thorough skin check, very quick." },
+    { "doctorId": 8, "patientId": 9, "rating": 4, "comment": "Knowledgeable cardiologist." },
+    { "doctorId": 9, "patientId": 10, "rating": 5, "comment": "The best pediatrician in town." },
+    { "doctorId": 10, "patientId": 1, "rating": 4, "comment": "Effective hair loss treatment plan." },
+    { "doctorId": 1, "patientId": 2, "rating": 5, "comment": "Very happy with the follow-up procedure." },
+    { "doctorId": 2, "patientId": 3, "rating": 3, "comment": "A bit rushed, but got the answers I needed." },
+    { "doctorId": 4, "patientId": 5, "rating": 4, "comment": "Helpful in setting up the treatment." },
+    { "doctorId": 5, "patientId": 6, "rating": 5, "comment": "A true specialist in cardiac care." },
+    { "doctorId": 7, "patientId": 8, "rating": 4, "comment": "Efficient service." }
+  ]

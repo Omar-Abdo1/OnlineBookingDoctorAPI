@@ -1,0 +1,12 @@
+ [
+    {  "userId": "17b07f6b-797c-46d5-83d4-e3bb7b7c7b5e", "fullName": "Jane Doe", "address": "101 Maple St, Anytown", "phoneNumber": "555-1001", "dateOfBirth": "1990-05-15T00:00:00Z" },
+    {  "userId": "8966da60-8c83-490e-b4d0-947e69c7c1ca", "fullName": "Tom Client", "address": "202 Oak Ave, Anytown", "phoneNumber": "555-1002", "dateOfBirth": "1985-11-20T00:00:00Z" },
+    {  "userId": "a731dba1-cbf5-4b41-aa2e-6978fcf16d51", "fullName": "Anna User", "address": "303 Pine Rd, Midtown", "phoneNumber": "555-1003", "dateOfBirth": "1992-03-01T00:00:00Z" },
+    {  "userId": "65650468-8855-4a43-8e89-4922ea246c5c", "fullName": "Bob King", "address": "404 Elm Blv, Midtown", "phoneNumber": "555-1004", "dateOfBirth": "1978-08-25T00:00:00Z" },
+    {  "userId": "b7552948-c06c-4313-90d1-3ddb937a2f21", "fullName": "Cathy Li", "address": "505 Birch Ln, Anytown", "phoneNumber": "555-1005", "dateOfBirth": "2001-01-10T00:00:00Z" },
+    {  "userId": "07725bb7-3e1c-4283-82f8-3b625a37987a", "fullName": "David P", "address": "606 Cedar Cr, Anytown", "phoneNumber": "555-1006", "dateOfBirth": "1965-04-30T00:00:00Z" },
+    {  "userId": "47f7128a-7022-4ba0-a7a8-43bbe25dfe59", "fullName": "Eva M", "address": "707 Ash Dr, Midtown", "phoneNumber": "555-1007", "dateOfBirth": "1989-12-12T00:00:00Z" },
+    {  "userId": "c0e5f107-da36-4a5d-b70f-df131ffbf926", "fullName": "Frank B", "address": "808 Willow Wy, Midtown", "phoneNumber": "555-1008", "dateOfBirth": "1995-07-07T00:00:00Z" },
+    {  "userId": "25db835c-f522-4de9-be20-06437139ac5d", "fullName": "Gina H", "address": "909 Syc Trl, Anytown", "phoneNumber": "555-1009", "dateOfBirth": "1980-02-14T00:00:00Z" },
+    {  "userId": "bc8cabff-c42b-4949-8291-e4466c67f98e", "fullName": "Hank R", "address": "100 Poplar Pk, Anytown", "phoneNumber": "555-1010", "dateOfBirth": "1993-06-21T00:00:00Z" }
+]

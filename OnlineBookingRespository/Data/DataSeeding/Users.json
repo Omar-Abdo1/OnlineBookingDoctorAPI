@@ -1,0 +1,22 @@
+[
+  { "idPlaceholder": "GUID-P1", "username": "p_jane.doe", "email": "jane@patient.com", "role": "Patient", "phoneNumber": "5551001" },
+  { "idPlaceholder": "GUID-P2", "username": "p_tom.client", "email": "tom@patient.com", "role": "Patient", "phoneNumber": "5551002" },
+  { "idPlaceholder": "GUID-P3", "username": "p_anna.user", "email": "anna@patient.com", "role": "Patient", "phoneNumber": "5551003" },
+  { "idPlaceholder": "GUID-P4", "username": "p_bob.king", "email": "bob@patient.com", "role": "Patient", "phoneNumber": "5551004" },
+  { "idPlaceholder": "GUID-P5", "username": "p_cathy.li", "email": "cathy@patient.com", "role": "Patient", "phoneNumber": "5551005" },
+  { "idPlaceholder": "GUID-P6", "username": "p_david.p", "email": "david@patient.com", "role": "Patient", "phoneNumber": "5551006" },
+  { "idPlaceholder": "GUID-P7", "username": "p_eva.m", "email": "eva@patient.com", "role": "Patient", "phoneNumber": "5551007" },
+  { "idPlaceholder": "GUID-P8", "username": "p_frank.b", "email": "frank@patient.com", "role": "Patient", "phoneNumber": "5551008" },
+  { "idPlaceholder": "GUID-P9", "username": "p_gina.h", "email": "gina@patient.com", "role": "Patient", "phoneNumber": "5551009" },
+  { "idPlaceholder": "GUID-P10", "username": "p_hank.r", "email": "hank@patient.com", "role": "Patient", "phoneNumber": "5551010" },
+  { "idPlaceholder": "GUID-D1", "username": "dr.smith", "email": "smith@doc.com", "role": "Doctor", "phoneNumber": "5552001" },
+  { "idPlaceholder": "GUID-D2", "username": "dr.jones", "email": "jones@doc.com", "role": "Doctor", "phoneNumber": "5552002" },
+  { "idPlaceholder": "GUID-D3", "username": "dr.patel", "email": "patel@doc.com", "role": "Doctor", "phoneNumber": "5552003" },
+  { "idPlaceholder": "GUID-D4", "username": "dr.kim", "email": "kim@doc.com", "role": "Doctor", "phoneNumber": "5552004" },
+  { "idPlaceholder": "GUID-D5", "username": "dr.lee", "email": "lee@doc.com", "role": "Doctor", "phoneNumber": "5552005" },
+  { "idPlaceholder": "GUID-D6", "username": "dr.chen", "email": "chen@doc.com", "role": "Doctor", "phoneNumber": "5552006" },
+  { "idPlaceholder": "GUID-D7", "username": "dr.white", "email": "white@doc.com", "role": "Doctor", "phoneNumber": "5552007" },
+  { "idPlaceholder": "GUID-D8", "username": "dr.brown", "email": "brown@doc.com", "role": "Doctor", "phoneNumber": "5552008" },
+  { "idPlaceholder": "GUID-D9", "username": "dr.green", "email": "green@doc.com", "role": "Doctor", "phoneNumber": "5552009" },
+  { "idPlaceholder": "GUID-D10", "username": "dr.adams", "email": "adams@doc.com", "role": "Doctor", "phoneNumber": "5552010" }
+]

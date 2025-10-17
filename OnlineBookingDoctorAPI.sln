@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineBookingDoctorAPI", "OnlineBookingDoctorAPI\OnlineBookingDoctorAPI.csproj", "{91390F33-B1B9-4F0D-A154-C100AE811418}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineBookingAPI", "OnlineBookingDoctorAPI\OnlineBookingAPI.csproj", "{91390F33-B1B9-4F0D-A154-C100AE811418}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineBookingCore", "OnlineBookingCore\OnlineBookingCore.csproj", "{6AF5BCC4-D2CC-465C-9F96-7C049CC869BC}"
 EndProject

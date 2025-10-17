@@ -1,5 +1,8 @@
 using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OnlineBookingCore.Entities;
+using OnlineBookingRepository;
 using OnlineBookingRespository.Data;
 
 namespace OnlineBookingDoctorAPI.ExtensionMethods;
@@ -14,10 +17,11 @@ public static class UpdatingDataBase
         try
         {           
                 var dbContext = Services.GetRequiredService<OnlineBookingContext>();
-            await dbContext.Database.MigrateAsync();
-             
-             // Seed data if necessary   
+               await dbContext.Database.MigrateAsync();
 
+            // Seed data if necessary
+            await OnlineBookingSeeding.SeedAsyncUsers(Services.GetRequiredService<UserManager<User>>());
+            await OnlineBookingSeeding.SeedAsync(dbContext);
         }
         catch (Exception ex)
         {

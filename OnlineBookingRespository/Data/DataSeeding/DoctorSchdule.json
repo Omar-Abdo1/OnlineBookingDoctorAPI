@@ -1,0 +1,17 @@
+ [
+    {  "doctorId": 1, "dayOfWeek": "Monday", "startTime": "09:00:00", "endTime": "12:00:00", "isAvailable": true },
+    { "doctorId": 1, "dayOfWeek": "Tuesday", "startTime": "14:00:00", "endTime": "17:00:00", "isAvailable": true },
+    { "doctorId": 2, "dayOfWeek": "Wednesday", "startTime": "10:00:00", "endTime": "16:00:00", "isAvailable": true },
+    { "doctorId": 3, "dayOfWeek": "Monday", "startTime": "08:00:00", "endTime": "17:00:00", "isAvailable": true },
+    { "doctorId": 4, "dayOfWeek": "Thursday", "startTime": "13:00:00", "endTime": "18:00:00", "isAvailable": true },
+    { "doctorId": 5, "dayOfWeek": "Friday", "startTime": "09:00:00", "endTime": "15:00:00", "isAvailable": true },
+    { "doctorId": 6, "dayOfWeek": "Monday", "startTime": "11:00:00", "endTime": "16:00:00", "isAvailable": true },
+    { "doctorId": 7, "dayOfWeek": "Tuesday", "startTime": "09:00:00", "endTime": "13:00:00", "isAvailable": true },
+    { "doctorId": 8, "dayOfWeek": "Wednesday", "startTime": "14:00:00", "endTime": "17:00:00", "isAvailable": true },
+    { "doctorId": 9, "dayOfWeek": "Thursday", "startTime": "08:00:00", "endTime": "12:00:00", "isAvailable": true },
+    { "doctorId": 10, "dayOfWeek": "Friday", "startTime": "10:00:00", "endTime": "14:00:00", "isAvailable": true },
+    { "doctorId": 1, "dayOfWeek": "Wednesday", "startTime": "08:00:00", "endTime": "10:00:00", "isAvailable": false },
+    { "doctorId": 2, "dayOfWeek": "Thursday", "startTime": "08:00:00", "endTime": "12:00:00", "isAvailable": true },
+    { "doctorId": 3, "dayOfWeek": "Tuesday", "startTime": "09:00:00", "endTime": "13:00:00", "isAvailable": true },
+    { "doctorId": 4, "dayOfWeek": "Friday", "startTime": "09:00:00", "endTime": "12:00:00", "isAvailable": true }
+  ]
