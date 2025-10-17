@@ -1,9 +1,11 @@
 using System;
+using OnlineBookingCore.Entities;
 
 namespace OnlineBookingDoctorAPI.Helpers;
 
 public class Pagination<T> where T : class
 {
+    
     public Pagination(int pageSize, int pageIndex, int count, IReadOnlyList<T>? data)
     {
         PageSize = pageSize;
@@ -16,4 +18,5 @@ public class Pagination<T> where T : class
     public int PageIndex { get; set; } = 1;
     public int Count { get; set; }
     public IReadOnlyList<T>? Data{ get; set; }
+
 }
