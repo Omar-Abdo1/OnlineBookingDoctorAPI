@@ -29,9 +29,9 @@ public class TokenService : ITokenService
         var userClaims = new List<Claim>()
         {
             // predefined Claims : 
-         new Claim(ClaimTypes.Email ,  user.Email),
-         new Claim(ClaimTypes.MobilePhone, user.PhoneNumber),
-         new Claim(ClaimTypes.Name,user.UserName),
+         new Claim(ClaimTypes.Email ,  user.Email??string.Empty),
+         new Claim(ClaimTypes.MobilePhone, user.PhoneNumber??string.Empty),
+         new Claim(ClaimTypes.Name,user.UserName??string.Empty),
          new Claim(ClaimTypes.NameIdentifier,user.Id),
          new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()) ,
          // Token Generated ID so it changes every Time

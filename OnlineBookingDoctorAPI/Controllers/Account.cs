@@ -38,7 +38,7 @@ namespace OnlineBookingAPI.Controllers
             {
                 Email = registerDTO.Email,
                 UserName = registerDTO.UserName,
-                Role = registerDTO.Role,
+                Role = registerDTO.Role.ToUpper(),
                 LastLogin = DateTime.UtcNow
             };
 

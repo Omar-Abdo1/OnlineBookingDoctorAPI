@@ -121,37 +121,50 @@ public class PublicSearchService : IPublicSearchService
 
     public async Task<(int, IReadOnlyList<FullDetailsDoctorDTO>)> SearchDoctorsAsync(DoctorSearchQueryDTO query)
     {
-        
-         Expression<Func<Doctor, bool>> criteria = d => true;
-            if (query.DepartmentId.HasValue)
-                criteria = criteria.And(d => d.DepartmentId == query.DepartmentId.Value);
 
-            if (!string.IsNullOrEmpty(query.DoctorName))
-                criteria = criteria.And(d => d.FullName.Contains(query.DoctorName));
+        Expression<Func<Doctor, bool>> criteria = d => true;
+        if (query.DepartmentId.HasValue)
+            criteria = criteria.And(d => d.DepartmentId == query.DepartmentId.Value);
 
-            var doctors = await _unitOfWork.Context.Set<Doctor>().AsNoTracking()
-            .Where(criteria)
-            .OrderBy(d => d.Id)
-            .Skip((query.pageNumber.Value - 1) * query.pageSize.Value)
-            .Take(query.pageSize.Value).Select(d => new FullDetailsDoctorDTO
+        if (!string.IsNullOrEmpty(query.DoctorName))
+            criteria = criteria.And(d => d.FullName.Contains(query.DoctorName));
+
+        var doctors = await _unitOfWork.Context.Set<Doctor>().AsNoTracking()
+        .Where(criteria)
+        .OrderBy(d => d.Id)
+        .Skip((query.pageNumber.Value - 1) * query.pageSize.Value)
+        .Take(query.pageSize.Value).Select(d => new FullDetailsDoctorDTO
+        {
+            FullName = d.FullName,
+            Address = d.Address,
+            YearsOfExperience = d.YearsOfExperience,
+            IsVerified = d.IsVerified,
+            PhoneNumber = d.PhoneNumber,
+            Department = new DepartmentDTO
             {
-                FullName = d.FullName,
-                Address = d.Address,
-                YearsOfExperience = d.YearsOfExperience,
-                IsVerified = d.IsVerified,
-                PhoneNumber = d.PhoneNumber,
-                Department = new DepartmentDTO
-                {
-                    Name = d.Department.Name,
-                    Description = d.Department.Description
-                },
-                AverageRating = d.Reviews.Average(r => r.Rating),
-                ClinicsCount = d.Clinics.Count(),
-                ReviewsCount = d.Reviews.Count(),
-                Addresses = d.Clinics.Select(c => c.Address).Distinct().ToList()
-            }).ToListAsync();
+                Name = d.Department.Name,
+                Description = d.Department.Description
+            },
+            AverageRating = d.Reviews.Average(r => r.Rating),
+            ClinicsCount = d.Clinics.Count(),
+            ReviewsCount = d.Reviews.Count(),
+            Addresses = d.Clinics.Select(c => c.Address).Distinct().ToList()
+        }).ToListAsync();
         int count = await _unitOfWork.Repository<Doctor>().CountAsync(criteria);
         return (count, doctors);
+    }
+    public async Task<FullDetailsDoctorV1DTO> GetDoctorAsync(int id)
+    {
+        var doctor = await _unitOfWork.Context.Set<Doctor>()
+        .Where(d => d.Id == id)
+        .Include(d => d.Department)
+        .Include(d => d.Clinics)
+        .Include(d => d.Reviews)
+        .ThenInclude(r => r.Patient).AsSplitQuery()
+        .FirstOrDefaultAsync();
+
+        var mappedDoctor = _mapper.Map<FullDetailsDoctorV1DTO>(doctor);
+        return mappedDoctor;
     }
 
     public async Task<(int, IReadOnlyList<DepartmentWithDoctorsDTO>)> GetDepartmentsAsync(int? pageNumber = 1, int? pageSize = 1, int? DepartmentId = null)

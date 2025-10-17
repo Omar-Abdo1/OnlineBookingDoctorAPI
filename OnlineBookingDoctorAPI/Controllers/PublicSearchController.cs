@@ -53,6 +53,18 @@ namespace OnlineBookingAPI.Controllers
             return Ok(new Pagination<FullDetailsDoctorDTO>(query.pageSize.Value, query.pageNumber.Value, count, doctors));
         }
 
+        [HttpGet("doctors/{id:int}")]
+        public async Task<IActionResult> GetDoctorByID(int id)
+        {
+            var doctor = await _unitOfWork.Repository<Doctor>().GetEntityByConditionAsync(d => d.Id == id);
+            if (doctor is null)
+                return NotFound(new ApiErrorResponse(404, $"Doctor with ID {id} not found."));
+            var mappedDoctor = await _publicSearchService.GetDoctorAsync(id);
+            return Ok(mappedDoctor);
+        }
+
+        
+
         // 4. GET /api/public/doctors/101/schedule?serviceId=...
         [HttpGet("doctors/{id}/schedule")]
         public async Task<IActionResult> GetDoctorSchedule(int id, [FromQuery] int serviceId, int? pageSize = 3, int? PageIndex = 1)
