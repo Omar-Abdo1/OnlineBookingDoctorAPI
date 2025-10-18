@@ -155,7 +155,7 @@ The core of BlogSphere is defined by its relational structure, designed for tran
 The diagram below illustrates the main tables and their one-to-many relationships (Foreign Keys):
 
 <p align="center">
-  <img src="./images/schema-diagram.png.png" alt="BlogSphere Database Schema Diagram" width="850"/> 
+  <img src="./images/schema-diagram.png" alt="BlogSphere Database Schema Diagram" width="850"/> 
 </p>
 ---
 
