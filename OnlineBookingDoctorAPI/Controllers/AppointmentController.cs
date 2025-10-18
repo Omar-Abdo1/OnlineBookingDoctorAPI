@@ -69,7 +69,7 @@ using OnlineBookingDoctorAPI.Helpers;
                 return Ok(details);
             }
 
-            [HttpGet("me")] // GET /api/appointments/me
+            [HttpGet("patient/me")] // GET /api/appointments/me
             [Authorize(Roles = "Patient")]
             public async Task<IActionResult> GetPatientAppointments([FromQuery] int? pageIndex = 1, [FromQuery] int? pageSize = 5)
             {

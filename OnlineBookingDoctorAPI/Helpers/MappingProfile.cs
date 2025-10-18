@@ -5,6 +5,7 @@ using OnlineBookingCore.DTO.Department;
 using OnlineBookingCore.DTO.Doctor;
 using OnlineBookingCore.DTO.Paitent;
 using OnlineBookingCore.DTO.Review;
+using OnlineBookingCore.DTO.Service;
 using OnlineBookingCore.Entities;
 
 namespace OnlineBookingAPI.Helpers;
@@ -31,6 +32,24 @@ public class MappingProfile : Profile
         .ForMember(dest => dest.PhoneNumber, opt => opt.Condition(src => src.PhoneNumber != null))
         .ForMember(dest => dest.DateOfBirth, opt => opt.Condition(src => src.DateOfBirth.HasValue));
         //////
+        
+        CreateMap<Doctor, DoctorProfileDetailsDTO>()
+           .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.Name));
+
+        CreateMap<DoctorProfileUpdateDTO, Doctor>()
+        .ForMember(dest => dest.Id, opt => opt.Ignore())
+        .ForMember(dest => dest.UserId, opt => opt.Ignore())
+        .ForMember(dest => dest.IsVerified, opt => opt.Ignore()) // Doctor cannot verify themselves
+        .ForMember(dest => dest.FullName, opt => opt.Condition(src => !string.IsNullOrEmpty(src.FullName)))
+        .ForMember(dest => dest.Address, opt => opt.Condition(src => !string.IsNullOrEmpty(src.Address)))
+        .ForMember(dest => dest.DepartmentId, opt => opt.Condition(src => src.DepartmentId.HasValue));
+
+        ////////
+        CreateMap<ServiceCreationUpdateDTO, Service>();
+        CreateMap<Service, ServiceDetailsDTO>();
+
+        /////////
+         
 
     }
 }

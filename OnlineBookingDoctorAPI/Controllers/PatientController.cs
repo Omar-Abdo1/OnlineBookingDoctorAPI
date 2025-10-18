@@ -29,18 +29,17 @@ namespace OnlineBookingAPI.Controllers
             _userManager = userManager;
         }
 
-        [HttpPost("me/profile")] // Corrected route spelling
+        [HttpPost("me/profile")]
         public async Task<IActionResult> CreatePatientProfile(PaitentRegisterDTO paitentRegister)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // 1. ROBUSTNESS CHECK: Prevent creation if profile already exists
             if (await _unitOfWork.Repository<Patient>().GetEntityByConditionAsync(p => p.UserId == userId) != null)
                 return Conflict(new ApiErrorResponse(409, "Patient profile already exists for this user."));
 
 
             var newPatient = _mapper.Map<Patient>(paitentRegister);
-            newPatient.UserId = userId; // Link the profile to the authenticated user
+            newPatient.UserId = userId; 
 
             await _unitOfWork.Repository<Patient>().AddAsync(newPatient);
             var res = await _unitOfWork.CompleteAsync();
@@ -53,7 +52,7 @@ namespace OnlineBookingAPI.Controllers
 
             return CreatedAtAction(
                 nameof(GetPatientProfile), // Method name as string
-                new { fullname = profileDto.FullName }, // Anonymous object with PK for the route
+                new { fullname = profileDto.FullName }, 
                 profileDto);
         }
 
