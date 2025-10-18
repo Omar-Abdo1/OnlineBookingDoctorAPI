@@ -55,13 +55,13 @@ using OnlineBookingDoctorAPI.Helpers;
                 };
             }
 
-            [HttpGet("{id:int}")]
+            [HttpGet("{Appointmentid:int}")]
             [Authorize(Roles = "Patient,Doctor")]
-            public async Task<IActionResult> GetAppointmentDetail(int id)
+            public async Task<IActionResult> GetAppointmentDetail(int Appointmentid)
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                var (details, isOwner) = await _appointmentService.GetAppointmentDetailsAsync(userId, id);
+                var (details, isOwner) = await _appointmentService.GetAppointmentDetailsAsync(userId, Appointmentid);
 
                 if (details == null && isOwner == false)
                     return NotFound(new ApiErrorResponse(404, "Appointment not found or access denied."));
@@ -69,24 +69,13 @@ using OnlineBookingDoctorAPI.Helpers;
                 return Ok(details);
             }
 
-            [HttpGet("patient/me")] // GET /api/appointments/me
+            [HttpPut("{Appointmentid:int}/cancel")] // PUT /api/appointments/{id}/cancel
             [Authorize(Roles = "Patient")]
-            public async Task<IActionResult> GetPatientAppointments([FromQuery] int? pageIndex = 1, [FromQuery] int? pageSize = 5)
+            public async Task<IActionResult> CancelAppointment(int Appointmentid)
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                var (count, appointments) = await _appointmentService.GetPatientAppointmentsAsync(userId, pageIndex, pageSize);
-
-                return Ok(new Pagination<AppointmentSummaryDTO>(pageSize.Value, pageIndex.Value, count, appointments));
-            }
-
-            [HttpPut("{id}/cancel")] // PUT /api/appointments/{id}/cancel
-            [Authorize(Roles = "Patient")]
-            public async Task<IActionResult> CancelAppointment(int id)
-            {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var (success, isOwner) = await _appointmentService.CancelAppointmentAsync(id, userId);
+                var (success, isOwner) = await _appointmentService.CancelAppointmentAsync(Appointmentid, userId);
 
                 if (!isOwner) return Forbid(); // 403 Forbidden: User is not the patient on this booking
                 if (!success) return BadRequest(new ApiErrorResponse(400, "Could not cancel appointment (may be too late)."));
@@ -94,13 +83,13 @@ using OnlineBookingDoctorAPI.Helpers;
                 return NoContent(); // 204 No Content
             }
 
-    [HttpPut("{id}/confirm")] // PUT /api/appointments/{id}/confirm
+    [HttpPut("{Appointmentid:int}/confirm")] // PUT /api/appointments/{id}/confirm
     [Authorize(Roles = "Doctor")] 
-    public async Task<IActionResult> ConfirmAppointment(int id)
+    public async Task<IActionResult> ConfirmAppointment(int Appointmentid)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
         
-        var (success, isDoctor) = await _appointmentService.ConfirmAppointmentAsync(id, userId);
+        var (success, isDoctor) = await _appointmentService.ConfirmAppointmentAsync(Appointmentid, userId);
 
         if (!isDoctor) return Forbid(); // 403 Forbidden: User is not the assigned doctor
         if (!success) return BadRequest(new ApiErrorResponse(400, "Could not confirm appointment."));

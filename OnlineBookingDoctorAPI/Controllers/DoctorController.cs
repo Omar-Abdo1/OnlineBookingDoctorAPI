@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineBookingAPI.Helpers;
 using OnlineBookingCore;
 using OnlineBookingCore.DTO.Doctor;
+using OnlineBookingCore.DTO.Schedule;
 using OnlineBookingCore.DTO.Service;
 using OnlineBookingCore.Entities;
 using OnlineBookingCore.Enums;
@@ -160,11 +161,11 @@ namespace OnlineBookingAPI.Controllers
     }
 
     
-    [HttpPut("/api/services/{id:int}")] // Overrides the Doctor base route
-    public async Task<IActionResult> UpdateService(int id, ServiceCreationUpdateDTO dto)
+    [HttpPut("/api/services/{ServiceId:int}")] // Overrides the Doctor base route
+    public async Task<IActionResult> UpdateService(int ServiceId, ServiceCreationUpdateDTO dto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var status = await _serviceManagementService.UpdateServiceAsync(id, userId, dto);
+        var status = await _serviceManagementService.UpdateServiceAsync(ServiceId, userId, dto);
 
         return status switch
         {
@@ -176,23 +177,33 @@ namespace OnlineBookingAPI.Controllers
     }
 
 
-    [HttpDelete("/api/services/{id}")] // Overrides the Doctor base route
-    public async Task<IActionResult> DeleteService(int id)
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var status = await _serviceManagementService.DeleteServiceAsync(id, userId);
-
-        return status switch
+        [HttpDelete("/api/services/{ServiceId:int}")] // Overrides the Doctor base route
+        public async Task<IActionResult> DeleteService(int ServiceId)
         {
-            ServiceManagementStatus.Success => NoContent(),
-            ServiceManagementStatus.ServiceNotFound => NotFound(new ApiErrorResponse(404, "Service not found.")),
-            ServiceManagementStatus.NotOwner => BadRequest(new ApiErrorResponse(403, "Access denied. Not the service owner.")),
-            _ => BadRequest(new ApiErrorResponse(400, "Deletion failed."))
-        };
-    } 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var status = await _serviceManagementService.DeleteServiceAsync(ServiceId, userId);
+
+            return status switch
+            {
+                ServiceManagementStatus.Success => NoContent(),
+                ServiceManagementStatus.ServiceNotFound => NotFound(new ApiErrorResponse(404, "Service not found.")),
+                ServiceManagementStatus.NotOwner => BadRequest(new ApiErrorResponse(403, "Access denied. Not the service owner.")),
+                _ => BadRequest(new ApiErrorResponse(400, "Deletion failed."))
+            };
+        }
 
 
-
+        [HttpGet("me/schedules")]
+        public async Task<IActionResult> GetDoctorSchedules(int? pageSize = 5, int? pageIndex = 1)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var schedules = await _serviceManagementService.GetSchedulesAsync(userId);
+            int count = schedules.Count();
+            schedules = schedules.Skip((pageIndex.Value - 1) * pageSize.Value).Take(pageSize.Value).ToList();
+            return Ok(new Pagination<ScheduleDetailsDTO>(pageSize.Value, pageIndex.Value, count, schedules));
+        }
+    
+    
 
     }
 

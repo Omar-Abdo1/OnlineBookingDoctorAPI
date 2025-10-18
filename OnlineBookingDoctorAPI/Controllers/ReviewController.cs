@@ -45,12 +45,12 @@ namespace OnlineBookingAPI.Controllers
             };
         }
 
-        [HttpDelete("{id:int}")] // DELETE /api/review/{id}
-        public async Task<IActionResult> DeleteReview(int id)
+        [HttpDelete("{Reviewid:int}")] // DELETE /api/review/{id}
+        public async Task<IActionResult> DeleteReview(int Reviewid)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var status = await reviewService.DeleteReviewAsync(id, userId);
+            var status = await reviewService.DeleteReviewAsync(Reviewid, userId);
 
             return status switch
             {

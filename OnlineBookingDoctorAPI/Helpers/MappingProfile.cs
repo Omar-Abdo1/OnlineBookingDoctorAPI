@@ -5,6 +5,7 @@ using OnlineBookingCore.DTO.Department;
 using OnlineBookingCore.DTO.Doctor;
 using OnlineBookingCore.DTO.Paitent;
 using OnlineBookingCore.DTO.Review;
+using OnlineBookingCore.DTO.Schedule;
 using OnlineBookingCore.DTO.Service;
 using OnlineBookingCore.Entities;
 
@@ -49,7 +50,14 @@ public class MappingProfile : Profile
         CreateMap<Service, ServiceDetailsDTO>();
 
         /////////
-         
+        CreateMap<ScheduleCreationDTO, DoctorSchedule>()
+     .ForMember(dest => dest.Id, opt => opt.Ignore())
+     .ForMember(dest => dest.DoctorId, opt => opt.Ignore())
+     .ForMember(dest => dest.Services, opt => opt.Ignore()); 
+    
+     CreateMap<DoctorSchedule, ScheduleDetailsDTO>()
+    .ForMember(dest => dest.ServiceNames, opt => opt.Ignore());
+             /////////
 
     }
 }
