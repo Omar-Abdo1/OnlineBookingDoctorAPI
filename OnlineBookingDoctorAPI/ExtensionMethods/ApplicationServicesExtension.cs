@@ -39,7 +39,9 @@ namespace OnlineBookingDoctorAPI.ExtensionMethods
 
             // Services :
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IResponseCacheService, ResponseCacheService>();
             services.AddScoped<IPublicSearchService, PublicSearchService>();
+            services.AddScoped<IAppointmentService,AppointmentService>();
             services.AddAutoMapper(typeof(MappingProfile));
 
 
