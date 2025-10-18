@@ -1,8 +1,26 @@
 # 🏥 ONLINE BOOKING DOCTOR API
 
+<p align="center">
+  <img src="https://img.shields.io/github/languages/top/Omar-Abdo1/OnlineBookingDoctorAPI?style=for-the-badge&logo=c%23&logoColor=white&color=512BD4" alt="Top Language">
+  <img src="https://img.shields.io/github/actions/workflow/status/Omar-Abdo1/OnlineBookingDoctorAPI/dotnet.yml?style=for-the-badge&logo=github" alt="Build Status">
+  <img src="https://img.shields.io/github/last-commit/Omar-Abdo1/OnlineBookingDoctorAPI?style=for-the-badge&logo=git&logoColor=white" alt="Last Commit">
+  <img src="https://img.shields.io/github/issues/Omar-Abdo1/OnlineBookingDoctorAPI?style=for-the-badge&logo=github" alt="Open Issues">
+</p>
+
 A robust API for an online doctor appointment booking system, facilitating seamless interaction between patients, doctors, and public users.
 
 ---
+
+## 🛠️ Tech Stack & Architecture
+
+Built on the latest .NET Core, the API employs a clean, layered architecture for separation of concerns and testability.
+
+| Category | Technology | Badge | Why we chose it |
+| :--- | :--- | :--- | :--- |
+| **Backend** | **.NET 8** (C#) | ![.NET](https://img.shields.io/badge/.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) | Performance, robustness, and a powerful ecosystem. |
+| **Database** | **SQL Server** | ![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white) | Reliability and transactional integrity for core content. |
+| **ORM** | **Entity Framework Core** | ![Entity Framework](https://img.shields.io/badge/Entity%20Framework-447943?style=for-the-badge) | Fluent, type-safe data access and migration management. |
+| **Authentication**| **JWT Bearer** | ![Security](https://img.shields.io/badge/Security-JWT-blueviolet?style=for-the-badge&logo=json-web-tokens) | Secure, stateless authentication for all endpoints. |
 
 ## 🔒 Security and Authentication
 
@@ -82,3 +100,74 @@ Doctors can manage their profile, services, schedules, and appointments:
 | **View Billing Records** | `/api/billing/records` | `GET` |
 
 ---
+## 🚀 Getting Started
+
+Follow these steps to run the BlogSphere API locally.
+
+### Prerequisites
+
+* [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download)
+* **Git**
+* **SQL Server** instance (or set up a different provider in your connection string)
+
+### Local Installation
+
+1.  **Clone the Repository**
+    ```sh
+    git clone [https://github.com/Omar-Abdo1/OnlineBookingDoctorAPI.git](https://github.com/Omar-Abdo1/OnlineBookingDoctorAPI.git)
+    cd BlogAPI
+    ```
+
+2.  **Configure Environment**
+    Create or modify your `appsettings.Development.json` (or use `dotnet user-secrets`) to set up your database connection string and JWT key.
+
+    ```json
+    {
+      "ConnectionStrings": {
+        "DefaultConnection": "Server=YourServer;Database=BlogDB;User Id=...;Password=..."
+      },
+      "Token": {
+        "Key": "A_VERY_LONG_AND_SECURE_JWT_KEY_HERE_MIN_128_BITS",
+        "Issuer": "https://localhost:5001/"
+      }
+    }
+    ```
+    *It is highly recommended to use the `dotnet user-secrets` tool to store sensitive data.*
+
+3.  **Run Database Migrations**
+    Initialize your database schema using Entity Framework Core tools.
+    ```sh
+    dotnet ef database update
+    ```
+
+4.  **Launch the API**
+    ```sh
+    dotnet run
+    ```
+    The API should now be running and accessible at `https://localhost:5001`. You can access the **Swagger UI** for testing at `https://localhost:5001/swagger`.
+
+---
+
+## 🖼️ Database Schema
+
+The core of BlogSphere is defined by its relational structure, designed for transactional integrity and efficient querying.
+
+The diagram below illustrates the main tables and their one-to-many relationships (Foreign Keys):
+
+<p align="center">
+  <img src="./images/schema-diagram.png.png" alt="BlogSphere Database Schema Diagram" width="850"/> 
+</p>
+---
+
+## 🤝 Contribution & Contact
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+* **Project Link**: [https://github.com/Omar-Abdo1/OnlineBookingDoctorAPI](https://github.com/Omar-Abdo1/OnlineBookingDoctorAPI)
+* **Author**: **Omar Abdo**
+* **Email**: [OmarRadwan10a@gmail.com](mailto:OmarRadwan10a@gmail.com)
+
+Feel free to open an issue for bug reports, feature requests, or any suggestions!
+
+
+
