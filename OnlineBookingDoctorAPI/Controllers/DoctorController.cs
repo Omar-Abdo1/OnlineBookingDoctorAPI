@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineBookingAPI.Helpers;
 using OnlineBookingCore;
+using OnlineBookingCore.DTO.Appointment;
+using OnlineBookingCore.DTO.BillingRecord;
 using OnlineBookingCore.DTO.Doctor;
 using OnlineBookingCore.DTO.Schedule;
 using OnlineBookingCore.DTO.Service;
@@ -27,13 +29,15 @@ namespace OnlineBookingAPI.Controllers
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly IServiceManagementService _serviceManagementService;
+        private readonly IAppointmentService _appointmentService;
         private readonly DbContext _context;
 
-        public DoctorController(IUnitOfWork unitOfWork, IMapper mapper,IServiceManagementService serviceManagementService)
+        public DoctorController(IUnitOfWork unitOfWork, IMapper mapper,IServiceManagementService serviceManagementService,IAppointmentService appointmentService)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             _serviceManagementService = serviceManagementService;
+            _appointmentService = appointmentService;
             _context = unitOfWork.Context;
         }
 
@@ -202,10 +206,49 @@ namespace OnlineBookingAPI.Controllers
             schedules = schedules.Skip((pageIndex.Value - 1) * pageSize.Value).Take(pageSize.Value).ToList();
             return Ok(new Pagination<ScheduleDetailsDTO>(pageSize.Value, pageIndex.Value, count, schedules));
         }
+
+
+        [HttpGet("/api/billing/records")]
+        public async Task<IActionResult> GetDoctorBillingHistory(int? pageSize = 5, int? pageIndex = 1)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var history = await _appointmentService.GetDoctorBillingHistoryAsync(userId);
+
+            int count = history.Count();
+            history = history.Skip((pageIndex.Value - 1) * pageSize.Value).Take(pageSize.Value).ToList();
+            return Ok(new Pagination<BillingDetailsDTO>(pageSize.Value, pageIndex.Value, count, history));
+        }
+
+        [HttpGet("me/appointments")]
+        public async Task<IActionResult> GetDoctorAppointments(int? PageSize = 5, int? PageIndex = 1)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var appointments = await _appointmentService.GetDoctorAppointmentsAsync(userId);
+
+            int count = appointments.Count();
+            appointments = appointments.Skip((PageIndex.Value - 1) * PageSize.Value).Take(PageSize.Value).ToList();
+            return Ok(new Pagination<AppointmentSummaryDoctorDTO>(PageSize.Value, PageIndex.Value, count, appointments));
+        } 
+     
+     
+[HttpPost("me/clinics/{clinicId:int}")]
+public async Task<IActionResult> AssociateClinic(int clinicId)
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
     
-    
+    var status = await _serviceManagementService.AssociateClinicAsync(userId, clinicId);
+
+    return status switch
+    {
+        ServiceManagementStatus.Success => NoContent(),
+        ServiceManagementStatus.DoctorNotFound => NotFound(new ApiErrorResponse(404, "Doctor profile not found.")),
+        ServiceManagementStatus.ServiceNotFound => NotFound(new ApiErrorResponse(404, "Clinic not found.")),
+        _ => BadRequest(new ApiErrorResponse(400, "Failed to associate clinic due to a server error."))
+    };
+}
 
     }
-
-    
+ 
 }

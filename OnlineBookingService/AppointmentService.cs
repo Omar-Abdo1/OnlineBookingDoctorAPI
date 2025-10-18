@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using OnlineBookingCore;
 using OnlineBookingCore.DTO.Appointment;
+using OnlineBookingCore.DTO.BillingRecord;
 using OnlineBookingCore.Entities;
 using OnlineBookingCore.Services;
 
@@ -13,19 +14,20 @@ public class AppointmentService : IAppointmentService
     private readonly IUnitOfWork unitOfWork;
     private readonly IMapper mapper;
 
-    public enum BookingStatus
-{
-    Success,
-    DoctorOrServiceNotFound,
-    SlotAlreadyBooked, // The race condition failure
-    ScheduleMismatch, // The chosen slot is not valid for the doctor/service
-    ProfileNotFound, // Patient profile hasn't been created yet
-    DatabaseError
-}
-       
 
-      public AppointmentService(IUnitOfWork unitOfWork,IMapper mapper)
-      {
+    public enum BookingStatus
+    {
+        Success,
+        DoctorOrServiceNotFound,
+        SlotAlreadyBooked, // The race condition failure
+        ScheduleMismatch, // The chosen slot is not valid for the doctor/service
+        ProfileNotFound, // Patient profile hasn't been created yet
+        DatabaseError
+    }
+
+
+    public AppointmentService(IUnitOfWork unitOfWork, IMapper mapper)
+    {
         this.unitOfWork = unitOfWork;
         this.mapper = mapper;
     }
@@ -122,139 +124,200 @@ public class AppointmentService : IAppointmentService
         .Include(a => a.BillingRecord).AsSplitQuery()
         .FirstOrDefaultAsync(a => a.Id == appointmentId);
 
-    if (appointment == null)
-        return (null, false);
-    
-    
-    var isPatient = appointment.Patient.UserId == userId;
-    var isDoctor = appointment.Doctor.UserId == userId;
-    
-    if (isPatient==false && isDoctor==false)
-    {
-        return (null, false); // Not the owner, reject access
+        if (appointment == null)
+            return (null, false);
+
+
+        var isPatient = appointment.Patient.UserId == userId;
+        var isDoctor = appointment.Doctor.UserId == userId;
+
+        if (isPatient == false && isDoctor == false)
+        {
+            return (null, false); // Not the owner, reject access
+        }
+
+        var details = new AppointmentDetailsDTO
+        {
+            AppointmentId = appointment.Id,
+            StartTime = appointment.StartTime,
+            DurationMinutes = appointment.BookedDurationMinutes,
+            Status = appointment.Status.ToString(),
+
+            ServicePrice = appointment.Service.Price,
+            ServiceName = appointment.Service.Name,
+
+            AmountDue = appointment.BillingRecord?.Amount ?? 0,
+            IsPaid = appointment.BillingRecord?.IsPaid ?? false,
+
+            DoctorId = appointment.DoctorId,
+            DoctorFullName = appointment.Doctor.FullName,
+            DepartmentName = appointment.Doctor.Department?.Name,
+
+            PatientId = appointment.PatientId,
+            PatientFullName = appointment.Patient.FullName,
+            PatientPhoneNumber = appointment.Patient.PhoneNumber
+        };
+
+        return (details, true);
+
     }
 
-    var details = new AppointmentDetailsDTO
-    {
-        AppointmentId = appointment.Id,
-        StartTime = appointment.StartTime,
-        DurationMinutes = appointment.BookedDurationMinutes,
-        Status = appointment.Status.ToString(),
-
-        ServicePrice = appointment.Service.Price,
-        ServiceName = appointment.Service.Name,
-        
-        AmountDue = appointment.BillingRecord?.Amount ?? 0,
-        IsPaid = appointment.BillingRecord?.IsPaid ?? false,
-
-        DoctorId = appointment.DoctorId,
-        DoctorFullName = appointment.Doctor.FullName,
-        DepartmentName = appointment.Doctor.Department?.Name,
-
-        PatientId = appointment.PatientId,
-        PatientFullName = appointment.Patient.FullName,
-        PatientPhoneNumber =  appointment.Patient.PhoneNumber
-    };
-
-    return (details, true);
-
-    }
-
-   public async Task<(int count,IReadOnlyList<AppointmentSummaryDTO>)> GetPatientAppointmentsAsync(string userId, int? pageIndex, int? pageSize)
+    public async Task<(int count, IReadOnlyList<AppointmentSummaryDTO>)> GetPatientAppointmentsAsync(string userId, int? pageIndex, int? pageSize)
     {
 
 
         int count = 0;
-    
-    var patientProfile = await unitOfWork.Repository<Patient>()
-        .GetEntityByConditionAsync(p => p.UserId == userId);
+
+        var patientProfile = await unitOfWork.Repository<Patient>()
+            .GetEntityByConditionAsync(p => p.UserId == userId);
 
         if (patientProfile == null)
             return (count, new List<AppointmentSummaryDTO>());
 
         var dbcontext = unitOfWork.Context;
 
-    var query = dbcontext.Set<Appointment>()
-        .Where(a => a.PatientId == patientProfile.Id)
-        .OrderByDescending(a => a.StartTime)
-        .AsNoTracking();
+        var query = dbcontext.Set<Appointment>()
+            .Where(a => a.PatientId == patientProfile.Id)
+            .OrderByDescending(a => a.StartTime)
+            .AsNoTracking();
 
-    count = await query.CountAsync();
+        count = await query.CountAsync();
 
-    var appointments = await query
-        .Skip((pageIndex.Value - 1) * pageSize.Value)
-        .Take(pageSize.Value)
-        .Include(a => a.Doctor)
-        .Include(a => a.Service)
-        .Select(a => new AppointmentSummaryDTO 
-        {
-            AppointmentId = a.Id,
-            AppointmentDate = a.StartTime,
-            Status = a.Status.ToString(),
-            DoctorName = a.Doctor.FullName,
-            ServiceName = a.Service.Name
-        })
-        .ToListAsync();
+        var appointments = await query
+            .Skip((pageIndex.Value - 1) * pageSize.Value)
+            .Take(pageSize.Value)
+            .Include(a => a.Doctor)
+            .Include(a => a.Service)
+            .Select(a => new AppointmentSummaryDTO
+            {
+                AppointmentId = a.Id,
+                AppointmentDate = a.StartTime,
+                Status = a.Status.ToString(),
+                DoctorName = a.Doctor.FullName,
+                ServiceName = a.Service.Name
+            })
+            .ToListAsync();
 
-    return (count,appointments);
-}
+        return (count, appointments);
+    }
 
-   public async Task<(bool Success, bool IsOwner)> CancelAppointmentAsync(int appointmentId, string userId)
-{
-    var patientProfile = await unitOfWork.Repository<Patient>()
-        .GetEntityByConditionAsync(p => p.UserId == userId);
-    
-    if (patientProfile == null) return (false, false);
+    public async Task<(bool Success, bool IsOwner)> CancelAppointmentAsync(int appointmentId, string userId)
+    {
+        var patientProfile = await unitOfWork.Repository<Patient>()
+            .GetEntityByConditionAsync(p => p.UserId == userId);
+
+        if (patientProfile == null) return (false, false);
 
         var appointment = await unitOfWork.Repository<Appointment>().GetEntityByConditionAsync(a => a.Id == appointmentId);
-    
-    if (appointment == null) return (false, true); // Appointment not found, but user is technically owner-capable
 
-    // Owner Check
-    if (appointment.PatientId != patientProfile.Id)
-        return (false, false); // Not the owner
-    
-    if (appointment.Status == AppointmentStatus.Canceled)
-    {
-        return (true, true); // Already canceled, return success
+        if (appointment == null) return (false, true); // Appointment not found, but user is technically owner-capable
+
+        // Owner Check
+        if (appointment.PatientId != patientProfile.Id)
+            return (false, false); // Not the owner
+
+        if (appointment.Status == AppointmentStatus.Canceled)
+        {
+            return (true, true); // Already canceled, return success
+        }
+
+        // Update status
+        appointment.Status = AppointmentStatus.Canceled;
+        unitOfWork.Repository<Appointment>().Update(appointment);
+
+        var result = await unitOfWork.CompleteAsync();
+
+        return (result > 0, true);
     }
-    
-    // Update status
-    appointment.Status = AppointmentStatus.Canceled;
-    unitOfWork.Repository<Appointment>().Update(appointment);
-
-    var result = await unitOfWork.CompleteAsync();
-
-    return (result > 0, true);
-}
 
     public async Task<(bool Success, bool IsDoctor)> ConfirmAppointmentAsync(int appointmentId, string doctorUserId)
+    {
+        var doctorProfile = await unitOfWork.Repository<Doctor>()
+            .GetEntityByConditionAsync(d => d.UserId == doctorUserId);
+
+        if (doctorProfile == null) return (false, false); // Not a recognized Doctor user
+
+        var appointment = await unitOfWork.Repository<Appointment>().GetEntityByConditionAsync(a => a.Id == appointmentId);
+
+        if (appointment == null) return (false, true);
+
+        // Doctor Owner Check
+        if (appointment.DoctorId != doctorProfile.Id)
+            return (false, false);
+
+
+        if (appointment.Status != AppointmentStatus.Pending)
+        {
+            return (true, true); // Already confirmed/canceled, return success
+        }
+
+        // Update status
+        appointment.Status = AppointmentStatus.Confirmed;
+        unitOfWork.Repository<Appointment>().Update(appointment);
+
+        var result = await unitOfWork.CompleteAsync();
+
+        return (result > 0, true);
+    }
+
+    ///  //// /// 
+    /// 
+    /// 
+    public async Task<IReadOnlyList<AppointmentSummaryDoctorDTO>> GetDoctorAppointmentsAsync(string doctorUserId)
+    {
+        var doctorProfile = await unitOfWork.Repository<Doctor>()
+            .GetEntityByConditionAsync(d => d.UserId == doctorUserId);
+
+        if (doctorProfile == null) return new List<AppointmentSummaryDoctorDTO>();
+
+        var context = unitOfWork.Context;
+
+        var appointments = await context.Set<Appointment>()
+            .Where(a => a.DoctorId == doctorProfile.Id)
+            .OrderByDescending(a => a.StartTime)
+            .Include(a => a.Patient)
+            .Include(a => a.Service)
+            .Select(a => new AppointmentSummaryDoctorDTO
+            {
+                AppointmentId = a.Id,
+                AppointmentDate = a.StartTime,
+                Status = a.Status.ToString(),
+                PatientName = a.Patient.FullName,
+                ServiceName = a.Service.Name
+            })
+            .ToListAsync();
+
+        return appointments;
+    }
+
+   
+   public async Task<IReadOnlyList<BillingDetailsDTO>> GetDoctorBillingHistoryAsync(string doctorUserId)
 {
     var doctorProfile = await unitOfWork.Repository<Doctor>()
         .GetEntityByConditionAsync(d => d.UserId == doctorUserId);
     
-    if (doctorProfile == null) return (false, false); // Not a recognized Doctor user
+    if (doctorProfile == null) return new List<BillingDetailsDTO>();
 
-    var appointment = await unitOfWork.Repository<Appointment>().GetEntityByConditionAsync(a=>a.Id==appointmentId);
-    
-    if (appointment == null) return (false, true);
+    var billingHistory = await unitOfWork.Context.Set<BillingRecord>()
+        .Include(br => br.Appointment)
+        .ThenInclude(a => a.Patient)
+        .Where(br => br.Appointment.DoctorId == doctorProfile.Id) // Filter by Doctor PK
+        .OrderByDescending(br => br.Appointment.StartTime)
+        .Select(br => new BillingDetailsDTO
+        {
+            RecordId = br.Id,
+            AppointmentId = br.AppointmentId,
+            AppointmentTime = br.Appointment.StartTime,
+            Amount = br.Amount,
+            IsPaid = br.IsPaid,
+            PatientName = br.Appointment.Patient.FullName
+        })
+        .ToListAsync();
 
-    // Doctor Owner Check
-    if (appointment.DoctorId != doctorProfile.Id)
-        return (false, false); 
-    
-
-    if (appointment.Status != AppointmentStatus.Pending)
-    {
-        return (true, true); // Already confirmed/canceled, return success
-    }
-    
-    // Update status
-    appointment.Status = AppointmentStatus.Confirmed;
-    unitOfWork.Repository<Appointment>().Update(appointment);
-
-    var result = await unitOfWork.CompleteAsync();
-
-    return (result > 0, true);
+    return billingHistory;
 }
+
+
+
+
 }

@@ -193,9 +193,9 @@ public class ServiceManagementService : IServiceManagementService
         var result = await _unitOfWork.CompleteAsync();
         return result > 0 ? ScheduleManagementStatus.Success : ScheduleManagementStatus.DatabaseError;
     }
- 
 
- // Update Schedule
+
+    // Update Schedule
     public async Task<ScheduleManagementStatus> UpdateScheduleAsync(int scheduleId, string doctorUserId, ScheduleCreationDTO dto)
     {
         // --- 1. INITIAL VALIDATION & OWNERSHIP CHECK ---
@@ -203,18 +203,18 @@ public class ServiceManagementService : IServiceManagementService
         if (doctorProfile == null) return ScheduleManagementStatus.DoctorNotFound;
 
         var existingSchedule = await _context.Set<DoctorSchedule>()
-            .Include(ds => ds.Services) 
+            .Include(ds => ds.Services)
             .FirstOrDefaultAsync(ds => ds.Id == scheduleId);
-        
+
         if (existingSchedule == null) return ScheduleManagementStatus.ScheduleNotFound;
 
         if (existingSchedule.DoctorId != doctorProfile.Id) return ScheduleManagementStatus.NotOwner;
-        
+
         var futureAppointmentsExist = await _context.Set<Appointment>()
             .AnyAsync(a => a.DoctorScheduleId == scheduleId && a.StartTime > DateTime.UtcNow);
 
         if (futureAppointmentsExist)
-            return ScheduleManagementStatus.ThereAreAppointmentBooked; 
+            return ScheduleManagementStatus.ThereAreAppointmentBooked;
 
         if (dto.ServiceIds != null && dto.ServiceIds.Any())
         {
@@ -232,8 +232,8 @@ public class ServiceManagementService : IServiceManagementService
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
-            
-            _mapper.Map(dto, existingSchedule); 
+
+            _mapper.Map(dto, existingSchedule);
 
             if (dto.ServiceIds != null)
             {
@@ -259,7 +259,7 @@ public class ServiceManagementService : IServiceManagementService
             else
             {
                 await transaction.RollbackAsync();
-                return ScheduleManagementStatus.DatabaseError; 
+                return ScheduleManagementStatus.DatabaseError;
             }
 
         }
@@ -269,5 +269,39 @@ public class ServiceManagementService : IServiceManagementService
             return ScheduleManagementStatus.DatabaseError;
         }
     }
+  
+  // AssociateClinic
+   public async Task<ServiceManagementStatus> AssociateClinicAsync(string doctorUserId, int clinicId)
+{
+    var doctorProfile = await _unitOfWork.Repository<Doctor>()
+        .GetEntityByConditionAsync(d => d.UserId == doctorUserId);
+    
+    if (doctorProfile == null) return ServiceManagementStatus.DoctorNotFound;
 
+    var clinicExists = await _unitOfWork.Repository<Clinic>().GetEntityByConditionAsync(c=>c.Id==clinicId);
+    if (clinicExists == null) return ServiceManagementStatus.ServiceNotFound;
+
+        var linkExists = await _unitOfWork.Context.Set<Clinic>()
+        .Include(c => c.Doctors)
+        .AnyAsync(c => c.Id == clinicId && c.Doctors.Any(d => d.Id == doctorProfile.Id));
+    
+    if (linkExists) return ServiceManagementStatus.Success; 
+
+    using var transaction = await _unitOfWork.Context.Database.BeginTransactionAsync();
+    try
+    {
+            await _unitOfWork.Context.Database.ExecuteSqlRawAsync(
+                "INSERT INTO DoctorClinic (DoctorId, ClinicId) VALUES ({0}, {1})",
+                doctorProfile.Id, clinicId
+            );
+        //[dbo].[DoctorClinic]
+        await transaction.CommitAsync();
+        return ServiceManagementStatus.Success;
+    }
+    catch (Exception)
+    {
+        await transaction.RollbackAsync();
+        return ServiceManagementStatus.DatabaseError;
+    }
+} 
 }

@@ -17,5 +17,9 @@ public interface IServiceManagementService
     Task<ScheduleManagementStatus> DeleteScheduleAsync(int scheduleId, string doctorUserId);
     Task<List<ScheduleDetailsDTO>> GetSchedulesAsync(string doctorUserId);
 
+    ////////
+    /// 
+    /// 
+    Task<ServiceManagementStatus> AssociateClinicAsync(string doctorUserId, int clinicId);
 
 }
