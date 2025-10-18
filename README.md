@@ -150,7 +150,7 @@ Follow these steps to run the BlogSphere API locally.
 
 ## 🖼️ Database Schema
 
-The core of BlogSphere is defined by its relational structure, designed for transactional integrity and efficient querying.
+The core of OnlineBookingDoctor is defined by its relational structure, designed for transactional integrity and efficient querying.
 
 The diagram below illustrates the main tables and their one-to-many relationships (Foreign Keys):
 
