@@ -6,6 +6,8 @@ using StackExchange.Redis;
 
 namespace OnlineBookingDoctorAPI;
 
+
+
 public class Program
 {
     public static async Task Main(string[] args)
@@ -17,6 +19,13 @@ public class Program
             // Add the converter to use string names for all enums
             options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
         });
+        builder.Services.AddControllers(options =>
+        {
+           // options.Filters.Add<MockDataFilter>();                  // enable mock filter
+           // options.Conventions.Add(new MockDataRouteConvention()); // add mock routes
+        });
+
+
 
         builder.Services.AddApplicationServices(builder.Configuration.GetConnectionString("DefaultConnection"));
 
@@ -35,15 +44,15 @@ public class Program
 
         builder.Services.AddSwaggerAdvanced("ONLINE BOOKING DOCTOR API");
 
-         builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("My Policy", options =>
-            {
-                options.AllowAnyHeader();
-                options.AllowAnyMethod();
-                options.WithOrigins(builder.Configuration["FrontBaseUrl"]); // URL for The FrontEnd
-            });
-        }); // for Angular Project 
+        builder.Services.AddCors(options =>
+       {
+           options.AddPolicy("My Policy", options =>
+           {
+               options.AllowAnyHeader();
+               options.AllowAnyMethod();
+               options.WithOrigins(builder.Configuration["FrontBaseUrl"]); // URL for The FrontEnd
+           });
+       }); // for Angular Project 
 
 
         var app = builder.Build();
@@ -65,13 +74,13 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseCors("My Policy");
-        
+
         app.UseAuthentication();
-        
+
         app.UseAuthorization();
-        
+
         app.MapControllers();
-        
+
         await app.RunAsync();
     }
 }
