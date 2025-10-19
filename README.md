@@ -17,7 +17,7 @@ Built on the latest .NET Core, the API employs a clean, layered architecture for
 
 | Category | Technology | Badge | Why we chose it |
 | :--- | :--- | :--- | :--- |
-| **Backend** | **.NET 8** (C#) | ![.NET](https://img.shields.io/badge/.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) | Performance, robustness, and a powerful ecosystem. |
+| **Backend** | **.NET 9** (C#) | ![.NET](https://img.shields.io/badge/.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) | Performance, robustness, and a powerful ecosystem. |
 | **Database** | **SQL Server** | ![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white) | Reliability and transactional integrity for core content. |
 | **ORM** | **Entity Framework Core** | ![Entity Framework](https://img.shields.io/badge/Entity%20Framework-447943?style=for-the-badge) | Fluent, type-safe data access and migration management. |
 | **Authentication**| **JWT Bearer** | ![Security](https://img.shields.io/badge/Security-JWT-blueviolet?style=for-the-badge&logo=json-web-tokens) | Secure, stateless authentication for all endpoints. |
