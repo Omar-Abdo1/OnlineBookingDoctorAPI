@@ -20,7 +20,7 @@ public static class UpdatingDataBase
                await dbContext.Database.MigrateAsync();
 
             // Seed data if necessary
-            await OnlineBookingSeeding.SeedAsyncUsers(Services.GetRequiredService<UserManager<User>>());
+            await OnlineBookingSeeding.SeedAsyncUsers(Services.GetRequiredService<UserManager<User>>() , Services.GetRequiredService<RoleManager<IdentityRole>>() );
             await OnlineBookingSeeding.SeedAsync(dbContext);
         }
         catch (Exception ex)

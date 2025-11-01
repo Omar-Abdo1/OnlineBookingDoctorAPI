@@ -3,6 +3,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OnlineBookingCore.DTO.Doctor;
+using OnlineBookingCore.DTO.Paitent;
 using OnlineBookingCore.DTO.UserDTO;
 using OnlineBookingCore.Entities;
 using OnlineBookingRespository.Data;
@@ -12,16 +14,35 @@ namespace OnlineBookingRepository;
 public static class OnlineBookingSeeding
 {
     const string defaultPassword = "Pa$$w0rd";
-    public static async Task SeedAsyncUsers(UserManager<User> userManager)
+    const string basePath = "../OnlineBookingRespository/Data/DataSeeding/";
+    private static Dictionary<string, string> userIdMap = new Dictionary<string, string>();
+
+    public static async Task SeedAsyncUsers(UserManager<User> userManager,RoleManager<IdentityRole> RoleManager)
 {
-        const string defaultPassword = "Pa$$w0rd";
+    
+    
+    string[] roleNames = { "Patient", "Doctor", "Admin" };
+
+    foreach (var roleName in roleNames)
+    {
+        if (!await RoleManager.RoleExistsAsync(roleName))
+        {
+            var result = await RoleManager.CreateAsync(new IdentityRole(roleName));
+
+            if (!result.Succeeded)
+            {
+                Console.WriteLine($"Error creating role {roleName}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
+        }
+    }
+    
+    
     if (!userManager.Users.Any())
     {
         // 1. Read the JSON file
           var usersData = File.ReadAllText("../OnlineBookingRespository/Data/DataSeeding/Users.json");
             var usersToSeed = JsonSerializer.Deserialize<List<UserSeedDTO>>(usersData);
 
-            //C:\Users\Windows 10\Desktop\OnlineBookingDoctorAPI\OnlineBookingRespository\Data\DataSeeding\Users.json
 
             if (usersToSeed?.Count > 0)
             {
@@ -36,6 +57,8 @@ public static class OnlineBookingSeeding
                         LastLogin = DateTime.MinValue
                     };
                     await userManager.CreateAsync(user, defaultPassword);
+                    await userManager.AddToRoleAsync(user,userSeed.role);
+                    userIdMap[userSeed.idPlaceholder] = user.Id;
                 }
             }
     }
@@ -44,7 +67,7 @@ public static class OnlineBookingSeeding
 
     public static async Task SeedAsync(OnlineBookingContext context)
     {
-        const string basePath = "../OnlineBookingRespository/Data/DataSeeding/";
+      
 
         var options = new JsonSerializerOptions
         {
@@ -72,28 +95,51 @@ public static class OnlineBookingSeeding
             await context.Clinics.AddRangeAsync(clinics);
             await context.SaveChangesAsync();
         }
-
-
-
+        
         if (!context.Patients.Any())
-        {
-            // 3. Patients (FK to User, requires UserId GUIDs)
-            var patientsData = await File.ReadAllTextAsync($"{basePath}Patients.json"); 
-            var patients = JsonSerializer.Deserialize<List<Patient>>(patientsData, options);
-            await context.Patients.AddRangeAsync(patients);
-            await context.SaveChangesAsync();
-        }
+    {
+        // 3. Patients (FK to User)
+        var patientsData = await File.ReadAllTextAsync($"{basePath}Patients.json");
+        var patientSeedDTOs = JsonSerializer.Deserialize<List<PatientSeedDTO>>(patientsData, options);
 
-        if (!context.Doctors.Any())
-        {
-            // 4. Doctors (FK to User and Department)
-            var doctorsData = await File.ReadAllTextAsync($"{basePath}Doctors.json");
-            var doctors = JsonSerializer.Deserialize<List<Doctor>>(doctorsData, options);
-            await context.Doctors.AddRangeAsync(doctors);
-            await context.SaveChangesAsync();
-        }
+        var patients = patientSeedDTOs
+            .Where(pDto => userIdMap.ContainsKey(pDto.userIdPlaceholder))
+            .Select(pDto => new Patient
+            {
+                UserId = userIdMap[pDto.userIdPlaceholder], 
+                
+                // Map other Patient properties
+                FullName = pDto.fullName,
+                Address = pDto.address,
+                PhoneNumber = pDto.phoneNumber,
+                DateOfBirth = pDto.dateOfBirth
+            }).ToList();
+        await context.Patients.AddRangeAsync(patients);
+        await context.SaveChangesAsync();
+    }
 
-
+    if (!context.Doctors.Any())
+    {
+        // 4. Doctors (FK to User and Department)
+        var doctorsData = await File.ReadAllTextAsync($"{basePath}Doctors.json");
+        var doctorSeedDTOs = JsonSerializer.Deserialize<List<DoctorSeedDTO>>(doctorsData, options);
+        
+        var doctors = doctorSeedDTOs
+            .Where(dDto => userIdMap.ContainsKey(dDto.userIdPlaceholder))
+            .Select(dDto => new Doctor
+            {
+                UserId = userIdMap[dDto.userIdPlaceholder],
+                
+                DepartmentId = dDto.departmentId,
+                FullName = dDto.fullName,
+                YearsOfExperience = dDto.yearsOfExperience,
+                IsVerified = dDto.isVerified
+            }).ToList();
+        
+        await context.Doctors.AddRangeAsync(doctors);
+        await context.SaveChangesAsync();
+    }
+    
         if (!context.Services.Any())
         {
             // 5. Services (FK to Doctor)
@@ -117,7 +163,6 @@ public static class OnlineBookingSeeding
         {
             // 9. Appointments (FK to Patient, Doctor, Schedule, Service)
             var appointmentsData = await File.ReadAllTextAsync($"{basePath}Appointments.json");
-            //C:\Users\Windows 10\Desktop\OnlineBookingDoctorAPI\OnlineBookingRespository\Data\DataSeeding\Appointments.json
             var appointments = JsonSerializer.Deserialize<List<Appointment>>(appointmentsData, options);
             await context.Appointments.AddRangeAsync(appointments);
             await context.SaveChangesAsync();
@@ -126,7 +171,6 @@ public static class OnlineBookingSeeding
         if (!context.BillingRecords.Any())
         {
             var billingData = await File.ReadAllTextAsync($"{basePath}BillingRecord.json");
-            //C:\Users\Windows 10\Desktop\OnlineBookingDoctorAPI\OnlineBookingRespository\Data\DataSeeding\BillingRecord.json
             var billingRecords = JsonSerializer.Deserialize<List<BillingRecord>>(billingData, options);
             await context.BillingRecords.AddRangeAsync(billingRecords);
             await context.SaveChangesAsync();
@@ -135,7 +179,6 @@ public static class OnlineBookingSeeding
         if (!context.Reviews.Any())
         {
             var reviewsData = await File.ReadAllTextAsync($"{basePath}Reviews.json");
-            //C:\Users\Windows 10\Desktop\OnlineBookingDoctorAPI\OnlineBookingRespository\Data\DataSeeding\Reviews.json
             var reviews = JsonSerializer.Deserialize<List<Review>>(reviewsData, options);
             await context.Reviews.AddRangeAsync(reviews);
             await context.SaveChangesAsync();
@@ -145,7 +188,6 @@ public static class OnlineBookingSeeding
 
          var doctorClinicData = await File.ReadAllTextAsync($"{basePath}DoctorClinic.json");
         var doctorClinics = JsonSerializer.Deserialize<List<Dictionary<string, int>>>(doctorClinicData, options);
-    // C:\Users\Windows 10\Desktop\OnlineBookingDoctorAPI\OnlineBookingRespository\Data\DataSeeding\DoctorClinic.json
         foreach (var dc in doctorClinics)
         {
             // SQL RAW INSERT: Inserting the many-to-many relationship explicitly
@@ -157,7 +199,6 @@ public static class OnlineBookingSeeding
 
         var schServiceData = await File.ReadAllTextAsync($"{basePath}DoctorScheduleService.json");
         var scheduleServices = JsonSerializer.Deserialize<List<Dictionary<string, int>>>(schServiceData, options);
-//C:\Users\Windows 10\Desktop\OnlineBookingDoctorAPI\OnlineBookingRespository\Data\DataSeeding\DoctorScheduleService.json
         foreach (var ss in scheduleServices)
         {
             // SQL RAW INSERT: Inserting the many-to-many relationship explicitly
