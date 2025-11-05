@@ -106,7 +106,7 @@ Follow these steps to run the BlogSphere API locally.
 
 ### Prerequisites
 
-* [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download)
+* [.NET 9 SDK](https://dotnet.microsoft.com/en-us/download)
 * **Git**
 * **SQL Server** instance (or set up a different provider in your connection string)
 
@@ -124,7 +124,7 @@ Follow these steps to run the BlogSphere API locally.
     ```json
     {
       "ConnectionStrings": {
-        "DefaultConnection": "Server=YourServer;Database=BlogDB;User Id=...;Password=..."
+        "DefaultConnection": "Server=YourServer;Database=OnlineDoctorDB;User Id=...;Password=..."
       },
       "Token": {
         "Key": "A_VERY_LONG_AND_SECURE_JWT_KEY_HERE_MIN_128_BITS",
