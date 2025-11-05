@@ -92,10 +92,6 @@ namespace OnlineBookingAPI.Controllers
         return NotFound(new ApiErrorResponse(404, "User not found."));
     }
 
-    // REVOCATION ACTION: Update the Security Stamp
-    // This method generates a new random GUID for the SecurityStamp field in the database.
-    // Since this NEW stamp no longer matches the OLD stamp embedded in the client's JWT, 
-    // the token is invalidated by the AuthorizeV1Filter middleware.
     await _userManager.UpdateSecurityStampAsync(user);
 
     return Content("You have been logged out successfully."); 
